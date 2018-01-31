@@ -9,4 +9,8 @@ class Kele
 
     @auth_token = self.class.post("/sessions", @params)
   end
+
+  def get_me
+    @current_user = self.class.get("/users/me", headers: { "authorization" => @auth_token["auth_token"] }).parsed_response
+  end
 end
