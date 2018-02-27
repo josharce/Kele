@@ -14,15 +14,26 @@ class Kele
   end
 
   def get_me
-    response = self.class.get("/users/me", headers: { "authorization" => @auth_token["auth_token"] })
-
-    JSON.parse(response.body)
+    response = self.class.get("/users/me", headers: { "authorization" => @auth_token["auth_token"] }).parsed_response
   end
 
   def mentor_times
     id = self.get_me["current_enrollment"]["mentor_id"]
-    response = self.class.get("/mentors/#{id}/student_availability", headers: { "authorization" => @auth_token["auth_token"] })
 
-    JSON.parse(response.body)
+    response = self.class.get("/mentors/#{id}/student_availability", headers: { "authorization" => @auth_token["auth_token"] }).parsed_response
+  end
+
+  def get_messages(page = 1)
+    @page = page
+
+    response = self.class.get("/message_threads", { query: { "page": @page }, headers: { "authorization" => @auth_token["auth_token"] } }).parsed_response
+  end
+
+  def create_message(recipient = nil, text = "No message entered.")
+    @sender = self.get_me["email"]
+    @recipient = recipient
+    @text = text
+
+    response = self.class.post("/messages", { query: { "sender": @sender, "recipient_id": @recipient, "stripped-text": @text}, headers: { "authorization" => @auth_token["auth_token"] } })
   end
 end
