@@ -36,4 +36,14 @@ class Kele
 
     response = self.class.post("/messages", { query: { "sender": @sender, "recipient_id": @recipient, "stripped-text": @text}, headers: { "authorization" => @auth_token["auth_token"] } })
   end
+
+  def create_submission(checkpoint_id = nil, assignment_branch = nil, assignment_commit_link = nil, comment = "No comment entered.")
+    @enrollment_id = self.get_me["current_enrollment"]["id"]
+    @checkpoint_id = checkpoint_id
+    @assignment_branch = assignment_branch
+    @assignment_commit_link = assignment_commit_link
+    @comment = comment
+
+    response = self.class.post("/checkpoint_submissions", { query: { "checkpoint_id": @checkpoint_id, "assignment_branch": @assignment_branch, "assignment_commit_link": @assignment_commit_link, "comment": @comment, "enrollment_id": @enrollment_id}, headers: { "authorization" => @auth_token["auth_token"] } })
+  end
 end
